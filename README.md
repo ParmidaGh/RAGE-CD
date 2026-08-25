@@ -258,7 +258,6 @@ External metrics are computed by aligning detected communities with the availabl
 ```text
 Self-Supervised-Community-Aware-Graph-Representation-Learning-for-Attributed-Networks
 │
-├── README.md
 ├── requirements.txt
 ├── run_experiment.py
 │
