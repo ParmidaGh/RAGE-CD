@@ -4,9 +4,9 @@
 
 ---
 
-# Self-Supervised Graph Representation Learning with Community-Aware Optimization for Attributed Networks Community Detection
+# Community-Aware Self-Supervised Graph Representation Learning for Community Detection in Attributed Networks
 
-Official implementation of the **RAGE-CD** (Residual Attention Graph Embedding for Community Detection) method, introduced in the research paper **“Self-Supervised Graph Representation Learning with Community-Aware Optimization for Attributed Networks Community Detection.”**
+Official implementation of the **RAGE-CD** (Residual Attention Graph Embedding for Community Detection) method, introduced in the research paper **“Community-Aware Self-Supervised Graph Representation Learning for Community Detection in Attributed Networks.”**
 
 This repository implements a two-stage self-supervised framework for community detection in attributed networks, combining a **Residual Graph Attention Network (Residual GAT)** encoder with **Deep Graph Infomax (DGI)** pretraining and community-aware fine-tuning through modularity optimization, KL-based cluster refinement, entropy regularization, and the DGI objective.
 
