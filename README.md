@@ -142,7 +142,7 @@ The implementation follows a two-stage self-supervised architecture in which gra
 | Residual GAT Encoder          | Learns topology- and attribute-aware node representations  |
 | DGI Pretraining               | Learns self-supervised graph representations               |
 | DGI Discriminator             | Distinguishes positive and corrupted node representations  |
-| Soft Cluster Assignment       | Produces differentiable community membership probabilities (head width K = d) |
+| Soft Cluster Assignment       | Produces differentiable community membership probabilities |
 | KL Objective                  | Refines and sharpens community assignments                 |
 | Modularity Loss               | Directly optimizes structural community quality            |
 | Entropy Regularizer           | Reduces degenerate community assignments                   |
@@ -171,7 +171,7 @@ flowchart TD
 
     subgraph Stage2["Stage 2: Community-Aware Fine-Tuning"]
         H[Residual GAT Encoder]
-        I[Soft Community Assignments<br/>K = d]
+        I[Soft Community Assignments]
         J[DGI Loss]
         K[KL Divergence Loss]
         L[Modularity Loss]
@@ -289,7 +289,7 @@ Self-Supervised-Community-Aware-Graph-Representation-Learning-for-Attributed-Net
 
 | File                   | Description                                                               |
 | :---------------------- | :------------------------------------------------------------------------- |
-| `src/models.py`        | Residual GAT encoder, soft-assignment head (K = d), and DGI discriminator |
+| `src/models.py`        | Residual GAT encoder and DGI discriminator |
 | `src/losses.py`        | DGI, modularity, KL-based refinement, and entropy-related loss components |
 | `src/train.py`         | DGI pretraining and community-aware fine-tuning                           |
 | `src/evaluate.py`      | Similarity graph construction and community evaluation                    |
