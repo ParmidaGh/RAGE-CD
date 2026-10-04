@@ -94,6 +94,16 @@ Following DGI pretraining, the encoder is fine-tuned using a joint community-awa
 
 The fine-tuning stage explicitly considers all four optimization components:
 
+### Soft-Assignment Head and the Number of Communities
+
+The fine-tuning losses operate on a soft assignment matrix produced by a linear layer followed by a softmax. The width of this head is set to **K = d**, where `d` is the embedding dimension (`EMBEDDING_DIM` in `src/config.py`).
+
+* K is **not** an estimate of the number of communities.
+* K is **not** obtained from ground-truth labels or from the number of classes.
+* No k-means initialization (or any other predefined cluster count) is used; the head is initialized randomly and trained jointly with the encoder.
+
+K only defines the dimensionality of the auxiliary soft-assignment space used by the fine-tuning losses. The final partition, and therefore the number of communities, is determined solely by Louvain on the embedding-similarity graph.
+
 ### (Optional) DGI Objective
 
 The DGI objective remains part of the joint optimization process, allowing the model to preserve the informative self-supervised representations learned during pretraining while adapting them to the community detection task.
@@ -132,7 +142,7 @@ The implementation follows a two-stage self-supervised architecture in which gra
 | Residual GAT Encoder          | Learns topology- and attribute-aware node representations  |
 | DGI Pretraining               | Learns self-supervised graph representations               |
 | DGI Discriminator             | Distinguishes positive and corrupted node representations  |
-| Soft Cluster Assignment       | Produces differentiable community membership probabilities |
+| Soft Cluster Assignment       | Produces differentiable community membership probabilities (head width K = d) |
 | KL Objective                  | Refines and sharpens community assignments                 |
 | Modularity Loss               | Directly optimizes structural community quality            |
 | Entropy Regularizer           | Reduces degenerate community assignments                   |
@@ -161,7 +171,7 @@ flowchart TD
 
     subgraph Stage2["Stage 2: Community-Aware Fine-Tuning"]
         H[Residual GAT Encoder]
-        I[Soft Community Assignments]
+        I[Soft Community Assignments<br/>K = d]
         J[DGI Loss]
         K[KL Divergence Loss]
         L[Modularity Loss]
@@ -215,7 +225,7 @@ After fine-tuning, the learned node embeddings are normalized and used to constr
 
 For each graph edge, the corresponding embedding similarity is used as the edge weight. This produces a graph in which learned representation similarity complements the original network topology.
 
-The resulting graph is passed to **Louvain community detection** to obtain the final community assignments.
+The resulting graph is passed to **Louvain community detection** to obtain the final community assignments. The number of detected communities is determined entirely by Louvain and is not fixed by K, ground-truth labels, or any predefined cluster count.
 
 ## Structural Metrics
 
@@ -238,7 +248,7 @@ When ground-truth labels are available, the implementation additionally reports:
 * **Macro Recall**
 * **Accuracy**
 
-External metrics are computed by aligning detected communities with the available ground-truth labels.
+External metrics are computed by aligning detected communities with the available ground-truth labels. Ground-truth labels are used only for this evaluation and never by the model, the losses, or the training loop.
 
 # Tools and Technologies
 
@@ -279,7 +289,7 @@ Self-Supervised-Community-Aware-Graph-Representation-Learning-for-Attributed-Net
 
 | File                   | Description                                                               |
 | :---------------------- | :------------------------------------------------------------------------- |
-| `src/models.py`        | Residual GAT encoder and DGI discriminator                                |
+| `src/models.py`        | Residual GAT encoder, soft-assignment head (K = d), and DGI discriminator |
 | `src/losses.py`        | DGI, modularity, KL-based refinement, and entropy-related loss components |
 | `src/train.py`         | DGI pretraining and community-aware fine-tuning                           |
 | `src/evaluate.py`      | Similarity graph construction and community evaluation                    |
